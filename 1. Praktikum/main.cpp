@@ -5,12 +5,15 @@
 
 int main()
 {
+	
+	//Tests during debugging
+	/*
 	CMyVektor vektor = CMyVektor();
 	vektor.set_d(3);
 	vektor.set_v(0, 0); vektor.set_v(1, 0); vektor.set_v(2, 0);
-	//vektor.laenge(vektor);
+	vektor.laenge(vektor);
 
-	//func(vektor);
+	func(vektor);
 
-	gradient(vektor, func);
+	gradient(vektor, func); */
 }

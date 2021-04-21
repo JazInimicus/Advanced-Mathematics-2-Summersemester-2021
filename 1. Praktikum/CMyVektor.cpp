@@ -25,8 +25,8 @@ double func(CMyVektor x)
 	//- (2x1 ^ 2 - 2x1x2 + x2 ^ 2 + x3 ^ 2 - 2x1 - 4x3);
 	//implementing Exponent pow(Base, Exponent) || (x.get_v)(x) -> from which position we want to have the value
 
-	//value = sin(x.get_v(1)) * (x.get_v(2)) + sin(x.get_v(1)) + cos(x.get_v(2));
 
+	//value = sin(x.get_v(1)) * (x.get_v(2)) + sin(x.get_v(1)) + cos(x.get_v(2));
 	value = -(pow(2 * (x.get_v(0)), 2) - 2 * (x.get_v(0)) * (x.get_v(1)) + pow((x.get_v(1)), 2) + pow((x.get_v(2)), 2) - 2 * (x.get_v(0)) - 4 * (x.get_v(2)));
 	std::cout << "Funktionswert: "<< value << std::endl;
 	return value;

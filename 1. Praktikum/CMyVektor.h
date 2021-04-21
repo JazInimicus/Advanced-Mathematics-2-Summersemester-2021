@@ -10,7 +10,7 @@ private:
 	std::vector<double> vektor; //because fuck Arrays
 
 public:
-	CMyVektor(); //Construktor
+	CMyVektor(); //Constructor
 
 	int get_d() { return dimension; }
 	void set_d(int x) { dimension = x; vektor.resize(dimension); }
