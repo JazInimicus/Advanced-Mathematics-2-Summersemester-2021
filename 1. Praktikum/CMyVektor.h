@@ -25,3 +25,4 @@ CMyVektor operator+(CMyVektor a, CMyVektor b);
 CMyVektor operator*(double lambda, CMyVektor a);
 CMyVektor gradient(CMyVektor x, double (*funktion)(CMyVektor x));
 double func(CMyVektor x);
+CMyVektor gradientenverfahren(CMyVektor x, double (*funktion)(CMyVektor x), double lambda)
