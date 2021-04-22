@@ -107,15 +107,15 @@ CMyVektor gradient(CMyVektor x, double (*funktion)(CMyVektor x)) //g = ((f(xi+h)
 CMyVektor gradientenverfahren(CMyVektor x, double (*funktion)(CMyVektor x), double lambda)
 {
 	int step = 1;
-	CMyVektor grad_xn;
+	CMyVektor grad_xn; //gradient xnew
 	CMyVektor xnew = x; //xnew will change every loop but still needs the first starting point that was given in main
-	CMyVektor xtest;
-	double lambdatest = lambda;
-	CMyVektor xprevtea;
+	CMyVektor xtest; //test steps
+	double lambdatest = lambda; //when doubling lambda
+	CMyVektor xprevtea; //saving previous x test
 	
 	do
 	{
-		step++;
+		step++; //step counter
 
 		std::cout << "x = " << "( " << xnew.get_v(0) << " ; " << xnew.get_v(1) << " )" << std::endl; //function f
 		//std::cout << "x = " << "( " << xnew.get_v(0) << " ; " << xnew.get_v(1) <<  << " ; " << xnew.get_v(2) )" << std::endl; //function g
@@ -128,8 +128,8 @@ CMyVektor gradientenverfahren(CMyVektor x, double (*funktion)(CMyVektor x), doub
 
 		std::cout << "||grad f(x)|| = " << laenge(func(xnew)) << std::endl << std::endl; //Lenght from gradient
 
-		grad_xn = gradient(xneu, func);
-		xtest = lambda * grad_xn;
+		grad_xn = gradient(xneu, func); //gradient xnew
+		xtest = lambda * grad_xn; //giving the new vector to a new variable to test with
 		xtest = xtest + xnew; //x1 = x0 + lambda * grad f(xo)
 		std::cout << "x_neu = ( " << xtest.get_v(0) << " ;  " << xtest.get_v(1) << " )" << std::endl;   //Value after a step f function
 		//std::cout << "x_neu = ( " << xtest.get_v(0) << " ;  " << xtest.get_v(1) <<  xtest.get_v(2) << " )" << std::endl;  //Value after a step g function
@@ -138,31 +138,31 @@ CMyVektor gradientenverfahren(CMyVektor x, double (*funktion)(CMyVektor x), doub
 
 
 		//Doppelte Schrittweite
-		if (func(xtest) > func(xnew))
+		if (func(xtest) > func(xnew)) //xtest needs to be bigger than xnew(value from the loop before)
 		{
 			std::cout << "Test mit doppelter Schrittweite (lambda = " << 2 * lambdatest << " ) : " << stdl::endl;
 
-			xprevtea = xtest; 
-			xtest = lambdatest * grad_xn(xnew, func);
+			xprevtea = xtest; //saving the test value in case we can keep our old step width
+			xtest = lambdatest * grad_xn(xnew, func); //giving the new vector to a new variable to test with
 			xtest = xtest + xnew; //x1 = x0 + lambda * grad f(xo)
 			std::cout << "x_test = ( " << xtest.get_v(0) << " ; " << xtest.get_v(1) << " )" << std::endl;  //Value f function
 			//std::cout << "x_test = ( " << xtest.get_v(0) << " ; " << xtest.get_v(1) << xtest.get_v(2) << " )" << std::endl; //Value g function
 			std::cout << "f(x_test) = " << func(xtest) << std::endl;
 
-			if (func(xprevtea) > func(xtest)) //
+			if (func(xprevtea) > func(xtest)) //in case that the previous step is lower than the test step
 			{
 				std::cout << "behalte alte Schrittweite!" << std::endl << std::endl;
-
-				xnew = xprevtea;
+				//lambdatest stays the same
+				xnew = xprevtea; //resets xnew to the previous step
 				grad_xn = gradient(xnew, func);
 			}
 
-			else if (func(xprevtea) < func(xtest)) //Übergibt neue Werte zum weiterrechnen
+			else if (func(xprevtea) < func(xtest)) //in case that the test is now bigger than the previous step
 			{
 				std::cout << "verdoppele Schrittweite!" << std::endl << std::endl;
 
-				lambda = lambdatest;
-				xnew = xtest;
+				lambda = lambdatest; //giving lambda the new value since we need to keep calculating with it
+				xnew = xtest; //the test step was successfull and is now the new starting point
 				grad_xn = gradient(xnew, func);
 			}
 			
@@ -174,24 +174,24 @@ CMyVektor gradientenverfahren(CMyVektor x, double (*funktion)(CMyVektor x), doub
 		{
 			do
 			{
-				lambda = lambda / 2;
+				lambda = lambda / 2; //we want to half lambda until we find the fitting value, that's why we don't need to safe lambda here to lambdatest
 				
 				std::cout << "halbiere Schrittweite (lambda = " << lambda << " ) : " << stdl::endl;
 
-				xtest = lambda * grad_xn(xnew, func);
-				xtest = xtest + xnew;
-				xprevtea = xtest;
+				xtest = lambda * grad_xn(xnew, func); //xtest new vector
+				xtest = xtest + xnew; //???
+				xprevtea = xtest; //saving there to check when the value will be higher than the xnew one
 				std::cout << "x_neu = ( " << xtest.get_v(0) << " ; " << xtest.get_v(1) << " )" << std::endl;  //Value f function
 				//std::cout << "x_neu = ( " << xprevtea.get_v(0) << " ; " << xprevtea.get_v(1) << xprevtea.get_v(2) << " )" << std::endl; //Value g function
 				std::cout << "f(x_neu) = " << func(xtest) << std::endl;
 
-			} while (func(xtest) < func(xnew))
+			} while (func(xtest) < func(xnew))  //checking when we found the value that we need
 
 			xnew = xtest;
 			grad_xn = gradient(xnew, func);
 		}
 		
-		if (grad_xn.laenge(grad_xn) < pow(10, -5))
+		if (grad_xn.laenge(grad_xn) < pow(10, -5)) //ending when ||grad f(x)||<1e-5
 		{
 			std::cout << "Ende wegen ||grad f(x)||<1e-5 bei " << std::endl;
 			std::cout << "x = " << x << std::endl;
@@ -203,7 +203,7 @@ CMyVektor gradientenverfahren(CMyVektor x, double (*funktion)(CMyVektor x), doub
 
 		else
 		{
-			std::cout << "Ende wegen Schrittzahl = 25 bei " << std::endl;
+			std::cout << "Ende wegen Schrittzahl = 25 bei " << std::endl; //ending when stepcount 25
 			std::cout << "x = " << x << std::endl;
 			std::cout << "lambda = " << lambda << std::endl;
 			std::cout << "f(x) = " << func(xnew) << std::endl;
@@ -213,6 +213,6 @@ CMyVektor gradientenverfahren(CMyVektor x, double (*funktion)(CMyVektor x), doub
 		
 
 
-	}while(step != 25 && grad_xn.laenge(grad_xn) > pow(10, -5))
+	}while(step != 25 && grad_xn.laenge(grad_xn) > pow(10, -5)) //setting the boundaries how long it should run: 25 steps or when value 10^-5
 
 }
