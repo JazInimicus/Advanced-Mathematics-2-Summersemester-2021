@@ -72,8 +72,8 @@ double func(CMyVektor x)
 
 	double value;
 
-	//value = sin(x.get_v(1)) * (x.get_v(2)) + sin(x.get_v(1)) + cos(x.get_v(2)); //f function
-	value = -(pow(2 * (x.get_v(0)), 2) - 2 * (x.get_v(0)) * (x.get_v(1)) + pow((x.get_v(1)), 2) + pow((x.get_v(2)), 2) - 2 * (x.get_v(0)) - 4 * (x.get_v(2))); //g function
+	value = sin(x.get_v(1)) * (x.get_v(2)) + sin(x.get_v(1)) + cos(x.get_v(2)); //f function
+	//value = -(pow(2 * (x.get_v(0)), 2) - 2 * (x.get_v(0)) * (x.get_v(1)) + pow((x.get_v(1)), 2) + pow((x.get_v(2)), 2) - 2 * (x.get_v(0)) - 4 * (x.get_v(2))); //g function
 	std::cout << "Funktionswert: " << value << std::endl;
 	return value;
 };
@@ -179,13 +179,13 @@ CMyVektor gradientenverfahren(CMyVektor x, double (*funktion)(CMyVektor x), doub
 				std::cout << "halbiere Schrittweite (lambda = " << lambda << " ) : " << stdl::endl;
 
 				xtest = lambda * grad_xn(xnew, func); //xtest new vector
-				xtest = xtest + xnew; //???
+				xtest = xtest + xnew; //x1 = x0 + lambda * grad f(xo), lambda and grad already in xtest saved
 				xprevtea = xtest; //saving there to check when the value will be higher than the xnew one
 				std::cout << "x_neu = ( " << xtest.get_v(0) << " ; " << xtest.get_v(1) << " )" << std::endl;  //Value f function
 				//std::cout << "x_neu = ( " << xprevtea.get_v(0) << " ; " << xprevtea.get_v(1) << xprevtea.get_v(2) << " )" << std::endl; //Value g function
 				std::cout << "f(x_neu) = " << func(xtest) << std::endl;
 
-			} while (func(xtest) < func(xnew))  //checking when we found the value that we need
+			} while (func(xtest) < func(xnew));  //checking when we found the value that we need
 
 			xnew = xtest;
 			grad_xn = gradient(xnew, func);
@@ -198,7 +198,7 @@ CMyVektor gradientenverfahren(CMyVektor x, double (*funktion)(CMyVektor x), doub
 			std::cout << "lambda = " << lambda << std::endl;
 			std::cout << "f(x) = " << func(xnew) << std::endl;
 			std::cout << "grad f(x) = " << func(xnew) << std::endl;
-			std::cout << "||grad f(x)|| = " << laenge(func(xnew)) << std::endl;
+			std::cout << "||grad f(x)|| = " << xnew.laenge(func(xnew)) << std::endl;
 		}
 
 		else
@@ -208,11 +208,11 @@ CMyVektor gradientenverfahren(CMyVektor x, double (*funktion)(CMyVektor x), doub
 			std::cout << "lambda = " << lambda << std::endl;
 			std::cout << "f(x) = " << func(xnew) << std::endl;
 			std::cout << "grad f(x) = " << func(xnew) << std::endl;
-			std::cout << "||grad f(x)|| = " << laenge(func(xnew)) << std::endl;
+			std::cout << "||grad f(x)|| = " << xnew.laenge(func(xnew)) << std::endl;
 		}
 		
 
 
-	}while(step != 25 && grad_xn.laenge(grad_xn) > pow(10, -5)) //setting the boundaries how long it should run: 25 steps or when value 10^-5
+	} while (step != 25 && grad_xn.laenge(grad_xn) > pow(10, -5)); //setting the boundaries how long it should run: 25 steps or when value 10^-5
 
 }

@@ -24,18 +24,18 @@ int main()
 	vector.set_v(0, 0.2);
 	vector.set_v(1, -2.1);
 
-	gradientenverfahren(x, func, 1);
+	gradientenverfahren(vector, func, 1);
 
 
 	//for Function g
-
-	CMyVektor vector;
+	/*
+	CMyVektor vector = CMyVektor();
 	vector.set_d(3);
 	vector.set_v(0, 0);
 	vector.set_v(1, 0);
 	vector.set_v(2, 0);
 
-	gradientenverfahren(x, func, 0.1);
+	gradientenverfahren(vector, func, 0.1); */
 
 	system("PAUSE");
 	return 0;
