@@ -1,7 +1,7 @@
 #include "CMyVektor.h"
 
 //Calling the constructor
-CMyVektor::CMyVektor() 
+CMyVektor::CMyVektor()
 {};
 
 
@@ -11,12 +11,12 @@ double CMyVektor::laenge(CMyVektor vektor) //sqrt(x1^2+....+xn^2)
 	double laenge = 0;
 
 	for (int i = 0; i < vektor.get_d(); i++)
-	{ 
+	{
 		laenge = laenge + (vektor.get_v(i) * vektor.get_v(i)); //takes value from loop before and just adds the value new until the end of the loop
 	}
 	laenge = sqrt(laenge); //since it's in a squareroot, need to get the value from that
 
-	std::cout << laenge << std::endl;
+	//std::cout << laenge << std::endl;
 	return laenge;
 }
 
@@ -30,7 +30,7 @@ CMyVektor operator+(CMyVektor a, CMyVektor b)
 
 	if (a.get_d() == b.get_d()) //a and b need to have the same dimension or else they couldn't be added
 	{
-		for (int i = 0; i <= a.get_d() && i <= b.get_d(); i++) //aomething like .size -> i can only get as big as the dimension of the two vectors
+		for (int i = 0; i < a.get_d() && i < b.get_d(); i++) //aomething like .size -> i can only get as big as the dimension of the two vectors
 		{
 			double ab = a.get_v(i) + b.get_v(i);
 			addition.set_v(i, ab);
@@ -52,7 +52,7 @@ CMyVektor operator*(double lambda, CMyVektor a)
 
 	multiplikation.set_d(a.get_d());
 
-	for (int i = 0; i <= a.get_d(); i++)
+	for (int i = 0; i < a.get_d(); i++)
 	{
 		double la = lambda * a.get_v(i);
 		multiplikation.set_v(i, la);
@@ -72,9 +72,12 @@ double func(CMyVektor x)
 
 	double value;
 
-	value = sin(x.get_v(1)) * (x.get_v(2)) + sin(x.get_v(1)) + cos(x.get_v(2)); //f function
-	//value = -(pow(2 * (x.get_v(0)), 2) - 2 * (x.get_v(0)) * (x.get_v(1)) + pow((x.get_v(1)), 2) + pow((x.get_v(2)), 2) - 2 * (x.get_v(0)) - 4 * (x.get_v(2))); //g function
-	std::cout << "Funktionswert: " << value << std::endl;
+	//value = sin((x.get_v(0)) * (x.get_v(1))) + sin(x.get_v(0)) + cos(x.get_v(1)); //f function
+	value = -(2 * pow((x.get_v(0)), 2) - 2 * ((x.get_v(0)) * (x.get_v(1))) + pow((x.get_v(1)), 2) + pow((x.get_v(2)), 2) - 2 * (x.get_v(0)) - 4 * (x.get_v(2))); //g function
+	//std::cout << "Funktionswert: " << value << std::endl;
+
+	//Praktikumstest
+	//value = (3 * pow(x.get_v(0), 2)) + (2 * x.get_v(1) * pow(x.get_v(2), 2));
 	return value;
 };
 
@@ -82,71 +85,85 @@ double func(CMyVektor x)
 //getting the gradient
 CMyVektor gradient(CMyVektor x, double (*funktion)(CMyVektor x)) //g = ((f(xi+h), xn) - f(xn)/h) || f(x0,y0,z0) = (f(x0+h, y0, z0) - f(x0,y0,z0))/h -> +h jeweils noch für die Funktion die man gerade ableitet
 {
-	const double h = pow(10, -8);
+	const double h = 1e-8; //pow(10, -8)
+
+	//Praktikumstest
+	//const double h = 0.1;
 
 	CMyVektor value;
+	double v = 0.0;
+	double fx = funktion(x);
 
 	value.set_d(x.get_d());
 
 	for (int i = 0; i < x.get_d(); i++)
 	{
-		double v = x.get_v(i); //saves x1 value to v
+		v = x.get_v(i); //saves x1 value to v
 
-		x.set_v(i, x.get_v(i) + h); //to value needs to be added the +h so that the right value will be put into the function
+		x.set_v(i, v + h); //to value needs to be added the +h so that the right value will be put into the function
 		value.set_v(i, funktion(x)); //saves value at point i, and calls function with starting point x
 
 		x.set_v(i, v); //sets value back to starting point for new loop
 
-		value.set_v(i, (value.get_v(i) - funktion(x)) / h); //calculates the "whole" value at point i 
+		value.set_v(i, (value.get_v(i) - fx) / h); //calculates the "whole" value at point i 
 	}
-	std::cout << "Gradient: " << value.get_v(0) << " " << value.get_v(1) << " " << value.get_v(2) << std::endl;
+	//std::cout << "Gradient: " << value.get_v(0) << " " << value.get_v(1) << std::endl; //f function
+	//std::cout << "Gradient: " << value.get_v(0) << " " << value.get_v(1) << " " << value.get_v(2) << std::endl; //g function
 	return value;
 }
 
 
 CMyVektor gradientenverfahren(CMyVektor x, double (*funktion)(CMyVektor x), double lambda)
 {
-	int step = 1;
+	int step = 0;
 	CMyVektor grad_xn; //gradient xnew
+	//grad_xn.set_d(2); //function f
+	grad_xn.set_d(3); //function g
 	CMyVektor xnew = x; //xnew will change every loop but still needs the first starting point that was given in main
 	CMyVektor xtest; //test steps
 	double lambdatest = lambda; //when doubling lambda
 	CMyVektor xprevtea; //saving previous x test
-	
+	double limit = 1e-5;
+
 	do
 	{
-		step++; //step counter
+		std::cout << std::endl;
+		//step++; //step counter
+		std::cout << "Schritt " << step << ": " << std::endl;
 
-		std::cout << "x = " << "( " << xnew.get_v(0) << " ; " << xnew.get_v(1) << " )" << std::endl; //function f
-		//std::cout << "x = " << "( " << xnew.get_v(0) << " ; " << xnew.get_v(1) <<  << " ; " << xnew.get_v(2) )" << std::endl; //function g
+		//std::cout << "x = " << "( " << xnew.get_v(0) << " ; " << xnew.get_v(1) << " )" << std::endl; //function f
+		std::cout << "x = " << "( " << xnew.get_v(0) << " ; " << xnew.get_v(1) << " ; " << xnew.get_v(2) << " )" << std::endl; //function g
 
 		std::cout << "lambda = " << lambda << std::endl;
 
 		std::cout << "f(x) = " << func(xnew) << std::endl;
 
-		std::cout << "grad f(x) = " << func(xnew) << std::endl;
+		grad_xn = gradient(xnew, func);
+		//std::cout << "grad f(x) = ( " <<  grad_xn.get_v(0) << " ; " << grad_xn.get_v(1) << " )"<< std::endl; //function f
+		std::cout << "grad f(x) = ( " << grad_xn.get_v(0) << " ; " << grad_xn.get_v(1) << ";" << grad_xn.get_v(2) << " )" << std::endl; //function g
 
-		std::cout << "||grad f(x)|| = " << laenge(func(xnew)) << std::endl << std::endl; //Lenght from gradient
+		std::cout << "||grad f(x)|| = " << xnew.laenge(gradient(xnew, func)) << std::endl << std::endl; //Lenght from gradient
 
-		grad_xn = gradient(xneu, func); //gradient xnew
+
 		xtest = lambda * grad_xn; //giving the new vector to a new variable to test with
 		xtest = xtest + xnew; //x1 = x0 + lambda * grad f(xo)
-		std::cout << "x_neu = ( " << xtest.get_v(0) << " ;  " << xtest.get_v(1) << " )" << std::endl;   //Value after a step f function
-		//std::cout << "x_neu = ( " << xtest.get_v(0) << " ;  " << xtest.get_v(1) <<  xtest.get_v(2) << " )" << std::endl;  //Value after a step g function
+		//std::cout << "x_neu = ( " << xtest.get_v(0) << " ;  " << xtest.get_v(1) << " )" << std::endl;   //Value after a step f function
+		std::cout << "x_neu = ( " << xtest.get_v(0) << " ;  " << xtest.get_v(1) << " ; " << xtest.get_v(2) << " )" << std::endl;  //Value after a step g function
 
-		std::cout << "f(x_neu)" << func(xtest) << std::endl << std::endl;
+		std::cout << "f(x_neu) = " << func(xtest) << std::endl << std::endl;
 
 
 		//Doppelte Schrittweite
 		if (func(xtest) > func(xnew)) //xtest needs to be bigger than xnew(value from the loop before)
 		{
-			std::cout << "Test mit doppelter Schrittweite (lambda = " << 2 * lambdatest << " ) : " << stdl::endl;
+			std::cout << "Test mit doppelter Schrittweite (lambda = " << 2 * lambda << " ) : " << std::endl;
+			lambdatest = 2 * lambda;
 
 			xprevtea = xtest; //saving the test value in case we can keep our old step width
-			xtest = lambdatest * grad_xn(xnew, func); //giving the new vector to a new variable to test with
+			xtest = lambdatest * grad_xn; //giving the new vector to a new variable to test with
 			xtest = xtest + xnew; //x1 = x0 + lambda * grad f(xo)
-			std::cout << "x_test = ( " << xtest.get_v(0) << " ; " << xtest.get_v(1) << " )" << std::endl;  //Value f function
-			//std::cout << "x_test = ( " << xtest.get_v(0) << " ; " << xtest.get_v(1) << xtest.get_v(2) << " )" << std::endl; //Value g function
+			//std::cout << "x_test = ( " << xtest.get_v(0) << " ; " << xtest.get_v(1) << " )" << std::endl;  //Value f function
+			std::cout << "x_test = ( " << xtest.get_v(0) << " ; " << xtest.get_v(1) << " ; " << xtest.get_v(2) << " )" << std::endl; //Value g function
 			std::cout << "f(x_test) = " << func(xtest) << std::endl;
 
 			if (func(xprevtea) > func(xtest)) //in case that the previous step is lower than the test step
@@ -165,7 +182,7 @@ CMyVektor gradientenverfahren(CMyVektor x, double (*funktion)(CMyVektor x), doub
 				xnew = xtest; //the test step was successfull and is now the new starting point
 				grad_xn = gradient(xnew, func);
 			}
-			
+
 		}
 
 
@@ -175,44 +192,54 @@ CMyVektor gradientenverfahren(CMyVektor x, double (*funktion)(CMyVektor x), doub
 			do
 			{
 				lambda = lambda / 2; //we want to half lambda until we find the fitting value, that's why we don't need to safe lambda here to lambdatest
-				
-				std::cout << "halbiere Schrittweite (lambda = " << lambda << " ) : " << stdl::endl;
 
-				xtest = lambda * grad_xn(xnew, func); //xtest new vector
+				std::cout << "halbiere Schrittweite (lambda = " << lambda << " ) : " << std::endl;
+
+				xtest = lambda * grad_xn; //xtest new vector
 				xtest = xtest + xnew; //x1 = x0 + lambda * grad f(xo), lambda and grad already in xtest saved
-				xprevtea = xtest; //saving there to check when the value will be higher than the xnew one
-				std::cout << "x_neu = ( " << xtest.get_v(0) << " ; " << xtest.get_v(1) << " )" << std::endl;  //Value f function
-				//std::cout << "x_neu = ( " << xprevtea.get_v(0) << " ; " << xprevtea.get_v(1) << xprevtea.get_v(2) << " )" << std::endl; //Value g function
-				std::cout << "f(x_neu) = " << func(xtest) << std::endl;
+
+				//std::cout << "x_neu = ( " << xtest.get_v(0) << " ; " << xtest.get_v(1) << " )" << std::endl;  //Value f function
+				std::cout << "x_neu = ( " << xprevtea.get_v(0) << " ; " << xprevtea.get_v(1) << " ; " << xprevtea.get_v(2) << " )" << std::endl; //Value g function
+				std::cout << "f(x_neu) = " << func(xtest) << std::endl << std::endl;
 
 			} while (func(xtest) < func(xnew));  //checking when we found the value that we need
 
 			xnew = xtest;
 			grad_xn = gradient(xnew, func);
 		}
-		
-		if (grad_xn.laenge(grad_xn) < pow(10, -5)) //ending when ||grad f(x)||<1e-5
+
+		if (grad_xn.laenge(grad_xn) < limit) //ending when ||grad f(x)||<1e-5
 		{
+			std::cout << std::endl;
 			std::cout << "Ende wegen ||grad f(x)||<1e-5 bei " << std::endl;
-			std::cout << "x = " << x << std::endl;
+			//std::cout << "x = " << "( " << xnew.get_v(0) << " ; " << xnew.get_v(1) << " )" << std::endl; //function f
+			std::cout << "x = " << "( " << xnew.get_v(0) << " ; " << xnew.get_v(1) << " ; " << xnew.get_v(2) << " )" << std::endl; //function g
 			std::cout << "lambda = " << lambda << std::endl;
 			std::cout << "f(x) = " << func(xnew) << std::endl;
-			std::cout << "grad f(x) = " << func(xnew) << std::endl;
-			std::cout << "||grad f(x)|| = " << xnew.laenge(func(xnew)) << std::endl;
+			grad_xn = gradient(xnew, func);
+			//std::cout << "grad f(x) = ( " << grad_xn.get_v(0) << " ; " << grad_xn.get_v(1) << " )" << std::endl; //function f
+			std::cout << "grad f(x) = ( " << grad_xn.get_v(0) << " ; " << grad_xn.get_v(1) << " ; " << grad_xn.get_v(2) << " )" << std::endl; //function g
+			std::cout << "||grad f(x)|| = " << xnew.laenge(gradient(xnew, func)) << std::endl << std::endl;
 		}
 
-		else
+		else if (step >= 25)
 		{
+			std::cout << std::endl;
 			std::cout << "Ende wegen Schrittzahl = 25 bei " << std::endl; //ending when stepcount 25
-			std::cout << "x = " << x << std::endl;
+			//std::cout << "x = " << "( " << xnew.get_v(0) << " ; " << xnew.get_v(1) << " )" << std::endl; //function f
+			std::cout << "x = " << "( " << xnew.get_v(0) << " ; " << xnew.get_v(1) << " ; " << xnew.get_v(2) << " )" << std::endl; //function g
 			std::cout << "lambda = " << lambda << std::endl;
 			std::cout << "f(x) = " << func(xnew) << std::endl;
-			std::cout << "grad f(x) = " << func(xnew) << std::endl;
-			std::cout << "||grad f(x)|| = " << xnew.laenge(func(xnew)) << std::endl;
+			grad_xn = gradient(xnew, func);
+			//std::cout << "grad f(x) = ( " << grad_xn.get_v(0) << " ; " << grad_xn.get_v(1) << " )" << std::endl; //function f
+			std::cout << "grad f(x) = ( " << grad_xn.get_v(0) << " ; " << grad_xn.get_v(1) << " ; " << grad_xn.get_v(2) << " )" << std::endl; //function g
+			std::cout << "||grad f(x)|| = " << xnew.laenge(gradient(xnew, func)) << std::endl << std::endl;
 		}
-		
 
+		step++;
 
-	} while (step != 25 && grad_xn.laenge(grad_xn) > pow(10, -5)); //setting the boundaries how long it should run: 25 steps or when value 10^-5
+	} while (step < 25 && grad_xn.laenge(grad_xn) > limit); //setting the boundaries how long it should run: 25 steps or when value 10^-5
+
+	return xnew;
 
 }

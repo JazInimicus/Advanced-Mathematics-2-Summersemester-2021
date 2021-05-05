@@ -5,7 +5,7 @@
 
 int main()
 {
-	
+
 	//Tests during debugging
 	/*
 	CMyVektor vektor = CMyVektor();
@@ -18,24 +18,40 @@ int main()
 	gradient(vektor, func); */
 
 
+
+
 	//for Function f
-	CMyVektor vector = CMyVektor();
+	/*(CMyVektor vector = CMyVektor();
 	vector.set_d(2);
 	vector.set_v(0, 0.2);
 	vector.set_v(1, -2.1);
 
-	gradientenverfahren(vector, func, 1);
+	gradientenverfahren(vector, func, 1.0); */
 
 
 	//for Function g
-	/*
+
 	CMyVektor vector = CMyVektor();
 	vector.set_d(3);
 	vector.set_v(0, 0);
 	vector.set_v(1, 0);
 	vector.set_v(2, 0);
 
-	gradientenverfahren(vector, func, 0.1); */
+	gradientenverfahren(vector, func, 0.1);
+
+
+
+
+
+	//Praktikumstest
+	/*CMyVektor vector = CMyVektor();
+	vector.set_d(3);
+	vector.set_v(0, 1);
+	vector.set_v(1, 3);
+	vector.set_v(2, 2);
+
+	gradient(vector, func); */
+
 
 	system("PAUSE");
 	return 0;
